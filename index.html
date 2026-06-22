@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Open House by Spitogatos — a paid listing add-on that turns scheduled property viewings into searchable, registrable events." name="description"/>
+<meta content="#191b1e" name="theme-color"/>
+<title>Open House by Spitogatos — Revised Feature Concept</title>
+<style>
+:root {
+  --ink: #242629;
+  --dark: #191b1e;
+  --dark-2: #24282d;
+  --orange: #ff9300;
+  --orange-deep: #f46f20;
+  --orange-soft: #fff0dc;
+  --cream: #fff9f1;
+  --sand: #f3ebdd;
+  --white: #ffffff;
+  --gray: #707378;
+  --gray-2: #a3a6aa;
+  --gray-3: #d9d9d6;
+  --teal: #009e9a;
+  --teal-soft: #ddf5f2;
+  --blue: #315c9a;
+  --blue-soft: #e8effa;
+  --purple: #6f57a5;
+  --purple-soft: #efe9fa;
+  --green: #33865a;
+  --green-soft: #e5f4eb;
+  --red: #c54a3a;
+  --red-soft: #fbeae7;
+  --shadow-sm: 0 12px 30px rgba(21, 22, 24, .08);
+  --shadow-md: 0 24px 70px rgba(21, 22, 24, .14);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 30px;
+  --container: 1180px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--cream);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+body.modal-open { overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+svg { display: block; width: 1em; height: 1em; }
+.svg-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.container { width: min(calc(100% - 40px), var(--container)); margin-inline: auto; }
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  padding: 14px 0;
+  transition: background .25s ease, box-shadow .25s ease, padding .25s ease;
+}
+.site-header.scrolled { background: rgba(25, 27, 30, .93); box-shadow: 0 8px 26px rgba(0,0,0,.18); backdrop-filter: blur(14px); padding: 9px 0; }
+.nav-shell { width: min(calc(100% - 40px), 1240px); margin: 0 auto; display: flex; align-items: center; gap: 28px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--white); flex-shrink: 0; }
+.brand-mark { width: 38px; height: 38px; border-radius: 11px; background: var(--orange); color: var(--white); position: relative; display: grid; place-items: center; box-shadow: 0 8px 18px rgba(255,147,0,.28); }
+.brand-mark svg { width: 21px; height: 21px; }
+.brand-mark .ear { position: absolute; top: -4px; width: 10px; height: 10px; background: var(--orange); transform: rotate(45deg); border-radius: 2px 0 2px 0; }
+.brand-mark .ear-left { left: 6px; }
+.brand-mark .ear-right { right: 6px; }
+.brand-copy { display: flex; flex-direction: column; line-height: 1; gap: 4px; }
+.brand-copy b { font-size: 15px; letter-spacing: .02em; }
+.brand-copy small { font-size: 8px; font-weight: 700; letter-spacing: .18em; color: var(--orange); }
+.primary-nav { display: flex; align-items: center; gap: 28px; margin-left: auto; }
+.primary-nav a { color: rgba(255,255,255,.76); font-size: 14px; font-weight: 700; transition: color .2s ease; }
+.primary-nav a:hover, .primary-nav a:focus-visible { color: var(--white); }
+.desktop-cta { margin-left: 6px; }
+.menu-button { display: none; margin-left: auto; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.18); border-radius: 12px; background: rgba(255,255,255,.06); color: var(--white); place-items: center; }
+.menu-button svg { width: 22px; height: 22px; }
+
+.dark-section { background: var(--dark); color: var(--white); }
+.hero { position: relative; min-height: 880px; overflow: hidden; padding: 160px 0 126px; }
+.hero::before { content: ""; position: absolute; inset: 0; opacity: .08; background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px); background-size: 64px 64px; mask-image: linear-gradient(to bottom, black, transparent 86%); }
+.hero-glow { position: absolute; border-radius: 50%; filter: blur(3px); pointer-events: none; }
+.glow-one { width: 610px; height: 610px; right: -160px; top: 60px; background: radial-gradient(circle, rgba(255,147,0,.27), rgba(255,147,0,0) 69%); }
+.glow-two { width: 420px; height: 420px; left: -180px; bottom: 0; background: radial-gradient(circle, rgba(0,158,154,.15), rgba(0,158,154,0) 68%); }
+.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.03fr) minmax(430px, .97fr); align-items: center; gap: 78px; }
+.hero-copy h1 { margin: 19px 0 24px; max-width: 690px; font-size: clamp(48px, 5.1vw, 76px); line-height: .98; letter-spacing: -.052em; }
+.hero-copy h1 span { color: var(--orange); }
+.hero-lede { max-width: 630px; margin: 0; color: rgba(255,255,255,.73); font-size: 19px; line-height: 1.62; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--orange-deep); font-weight: 800; font-size: 11px; letter-spacing: .17em; }
+.eyebrow::before { content: ""; width: 24px; height: 2px; background: currentColor; }
+.eyebrow-inverse { color: var(--orange); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.button { border: 0; min-height: 50px; padding: 0 22px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; font-size: 14px; transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease; }
+.button:hover { transform: translateY(-2px); }
+.button:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(255,147,0,.35); outline-offset: 3px; }
+.button svg { width: 18px; height: 18px; }
+.button-primary { background: var(--orange); color: var(--dark); box-shadow: 0 12px 26px rgba(255,147,0,.25); }
+.button-primary:hover { background: #ffa01f; box-shadow: 0 16px 34px rgba(255,147,0,.31); }
+.button-ghost { border: 1px solid rgba(255,255,255,.22); color: var(--white); background: rgba(255,255,255,.055); }
+.button-ghost:hover { background: rgba(255,255,255,.1); }
+.button-light { min-height: 42px; padding: 0 17px; color: var(--dark); background: var(--white); }
+.button-dark { background: var(--dark); color: var(--white); }
+.button-small { font-size: 13px; border-radius: 10px; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 30px; }
+.hero-tags span { padding: 8px 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.045); color: rgba(255,255,255,.62); font-size: 11px; font-weight: 700; }
+
+.hero-demo { position: relative; background: #f9f9f7; color: var(--ink); border: 1px solid rgba(255,255,255,.12); border-radius: 24px; overflow: visible; box-shadow: 0 40px 100px rgba(0,0,0,.4); transform: rotate(1deg); }
+.browser-bar { height: 42px; background: #ececea; border-radius: 23px 23px 0 0; display: flex; align-items: center; gap: 7px; padding: 0 14px; }
+.browser-bar > span { width: 9px; height: 9px; border-radius: 50%; background: #ef6a5b; }
+.browser-bar > span:nth-child(2) { background: #f6c344; }
+.browser-bar > span:nth-child(3) { background: #63c174; }
+.browser-bar div { flex: 1; max-width: 240px; margin: 0 auto; padding: 5px 14px; border-radius: 7px; background: rgba(255,255,255,.74); color: #85878a; font-size: 9px; text-align: center; }
+.listing-image { height: 242px; position: relative; overflow: hidden; background: linear-gradient(145deg, #dbe7ec, #f4eee7); }
+.building-art { position: absolute; inset: 0; }
+.block { position: absolute; bottom: -12px; background: linear-gradient(180deg, #f6f4ee, #cdd7db); border: 8px solid rgba(255,255,255,.65); box-shadow: inset 0 0 0 1px rgba(0,0,0,.03); }
+.block::before { content: ""; position: absolute; inset: 16px; background-image: linear-gradient(90deg, transparent 45%, rgba(49,92,154,.17) 46%, rgba(49,92,154,.17) 62%, transparent 63%), linear-gradient(transparent 41%, rgba(49,92,154,.14) 42%, rgba(49,92,154,.14) 58%, transparent 59%); background-size: 52px 48px; }
+.block-one { left: 30px; width: 170px; height: 175px; transform: skewY(-3deg); }
+.block-two { left: 176px; width: 190px; height: 220px; z-index: 2; }
+.block-three { right: 14px; width: 140px; height: 155px; transform: skewY(3deg); }
+.sun { position: absolute; right: 42px; top: 22px; width: 70px; height: 70px; border-radius: 50%; background: rgba(255,147,0,.28); box-shadow: 0 0 70px rgba(255,147,0,.4); }
+.image-badge { position: absolute; left: 18px; top: 16px; padding: 7px 10px; border-radius: 8px; color: var(--dark); background: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .08em; }
+.heart-button { position: absolute; right: 15px; top: 14px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 20px; color: var(--ink); }
+.listing-body { padding: 22px 22px 20px; }
+.listing-heading { display: flex; justify-content: space-between; gap: 20px; }
+.listing-heading p { margin: 0 0 3px; font-size: 17px; font-weight: 800; }
+.listing-heading span { color: var(--gray); font-size: 11px; }
+.listing-heading strong { font-size: 20px; white-space: nowrap; }
+.listing-heading strong small { display: block; color: var(--gray); font-size: 9px; font-weight: 500; text-align: right; }
+.event-module { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 13px; margin-top: 18px; padding: 13px; border: 1px solid #f2d5aa; border-radius: 14px; background: var(--orange-soft); }
+.event-date { width: 48px; height: 48px; border-radius: 11px; background: var(--white); display: grid; place-content: center; text-align: center; line-height: 1; }
+.event-date b { font-size: 19px; }
+.event-date span { margin-top: 4px; color: var(--orange-deep); font-size: 8px; font-weight: 900; }
+.event-detail b, .event-detail span { display: block; }
+.event-detail b { font-size: 11px; }
+.event-detail span { margin-top: 4px; color: var(--gray); font-size: 8px; }
+.event-module .button { min-height: 38px; padding: 0 15px; border-radius: 9px; font-size: 11px; }
+.attendee-row { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+.avatars { display: flex; }
+.avatars span { width: 28px; height: 28px; margin-left: -7px; border: 2px solid var(--white); border-radius: 50%; display: grid; place-items: center; color: var(--white); background: var(--teal); font-size: 8px; font-weight: 800; }
+.avatars span:first-child { margin-left: 0; background: var(--blue); }
+.avatars span:nth-child(3) { background: var(--orange-deep); }
+.avatars span:nth-child(4) { background: var(--purple); }
+.avatars span:nth-child(5) { background: var(--green); }
+.attendee-row p { margin: 0; color: var(--gray); font-size: 9px; }
+.attendee-row p b { color: var(--ink); }
+.floating-note { position: absolute; padding: 11px 14px; border-radius: 12px; display: flex; align-items: center; gap: 8px; color: var(--white); background: #30343a; box-shadow: var(--shadow-md); font-size: 10px; font-weight: 700; transform: rotate(-1deg); }
+.floating-note svg { width: 16px; height: 16px; color: var(--orange); }
+.note-filter { left: -64px; top: 124px; }
+.note-lead { right: -36px; bottom: 74px; }
+.hero-bottom-wave { position: absolute; left: -5%; right: -5%; bottom: -71px; height: 142px; background: var(--cream); border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+
+.metrics-section { padding: 106px 0 95px; }
+.section-intro { max-width: 620px; }
+.section-intro.narrow { max-width: 760px; margin-inline: auto; text-align: center; }
+.section-intro.narrow .eyebrow { justify-content: center; }
+.section-intro h2 { margin: 13px 0 15px; font-size: clamp(34px, 4.1vw, 52px); line-height: 1.05; letter-spacing: -.038em; }
+.section-intro p { margin: 0; color: var(--gray); font-size: 17px; line-height: 1.65; }
+.section-intro.inverse p { color: rgba(255,255,255,.64); }
+.metric-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.metric-card { min-height: 250px; padding: 25px; border: 1px solid rgba(36,38,41,.08); border-radius: var(--radius-md); background: var(--white); box-shadow: var(--shadow-sm); }
+.metric-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; }
+.metric-icon svg { width: 22px; height: 22px; }
+.metric-icon.orange { color: var(--orange-deep); background: var(--orange-soft); }
+.metric-icon.teal { color: var(--teal); background: var(--teal-soft); }
+.metric-icon.blue { color: var(--blue); background: var(--blue-soft); }
+.metric-icon.purple { color: var(--purple); background: var(--purple-soft); }
+.metric-card strong { display: block; margin-top: 25px; font-size: 36px; line-height: 1; letter-spacing: -.04em; }
+.metric-card b { display: block; margin-top: 8px; font-size: 13px; }
+.metric-card p { margin: 10px 0 0; color: var(--gray); font-size: 12px; }
+.strategy-callout { margin-top: 18px; padding: 23px 27px; border-radius: 16px; display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 24px; background: var(--dark); color: var(--white); }
+.callout-label { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.strategy-callout p { margin: 0; color: rgba(255,255,255,.72); font-size: 14px; }
+.strategy-callout b { color: var(--white); }
+
+.strategy-section { padding: 105px 0; background: #f5eee4; }
+.strategy-grid { display: grid; grid-template-columns: .75fr .55fr 1.2fr; gap: 46px; align-items: center; }
+.strategy-rings { position: relative; width: 300px; height: 300px; margin-inline: auto; }
+.ring { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; color: var(--orange-deep); background: rgba(255,147,0,.1); }
+.ring span { position: absolute; top: 19px; font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.ring-how { inset: 45px; background: rgba(255,147,0,.19); }
+.ring-how span { top: 17px; }
+.ring-why { inset: 92px; background: var(--orange); color: var(--dark); text-align: center; }
+.ring-why span { top: 13px; color: rgba(25,27,30,.65); }
+.ring-why b { max-width: 100px; font-size: 12px; line-height: 1.25; }
+.strategy-cards { display: grid; gap: 13px; }
+.strategy-card { padding: 18px; border-radius: 15px; display: grid; grid-template-columns: 55px 1fr; gap: 14px; align-items: start; background: var(--white); box-shadow: var(--shadow-sm); }
+.strategy-card > span { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: var(--orange-soft); color: var(--orange-deep); font-size: 9px; font-weight: 900; }
+.strategy-card:nth-child(2) > span { color: var(--teal); background: var(--teal-soft); }
+.strategy-card:nth-child(3) > span { color: var(--blue); background: var(--blue-soft); }
+.strategy-card h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.strategy-card p { margin: 7px 0 0; color: var(--gray); font-size: 11px; }
+
+.persona-section { padding: 105px 0; }
+.persona-shell { margin-top: 46px; border: 1px solid rgba(255,255,255,.11); border-radius: 22px; overflow: hidden; background: var(--dark-2); box-shadow: 0 25px 80px rgba(0,0,0,.22); }
+.persona-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid rgba(255,255,255,.1); }
+.persona-tab { min-height: 78px; padding: 13px 20px; border: 0; border-right: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; gap: 11px; color: rgba(255,255,255,.55); background: transparent; font-weight: 800; }
+.persona-tab:last-child { border-right: 0; }
+.persona-tab span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--teal); background: var(--teal-soft); font-size: 10px; }
+.persona-tab:nth-child(2) span { color: var(--orange-deep); background: var(--orange-soft); }
+.persona-tab:nth-child(3) span { color: var(--blue); background: var(--blue-soft); }
+.persona-tab.active { color: var(--white); background: rgba(255,255,255,.055); box-shadow: inset 0 -3px var(--orange); }
+.persona-panel { min-height: 385px; padding: 46px; display: grid; grid-template-columns: .65fr 1.35fr; column-gap: 60px; align-items: center; }
+.persona-identity { display: flex; align-items: center; gap: 17px; }
+.persona-avatar { width: 74px; height: 74px; flex: 0 0 auto; border-radius: 24px; display: grid; place-items: center; color: var(--teal); background: var(--teal-soft); font-size: 19px; font-weight: 900; }
+.persona-identity span { color: var(--gray-2); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+.persona-identity h3 { margin: 5px 0 0; font-size: 21px; }
+.persona-panel blockquote { grid-column: 2; grid-row: 1; margin: 0; font-size: 27px; line-height: 1.3; letter-spacing: -.025em; font-weight: 700; }
+.persona-needs { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 44px; }
+.persona-needs div { padding: 19px; border: 1px solid rgba(255,255,255,.09); border-radius: 14px; background: rgba(255,255,255,.035); }
+.persona-needs span { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
+.persona-needs p { margin: 8px 0 0; color: rgba(255,255,255,.72); font-size: 12px; }
+
+.experience-section { padding: 108px 0; }
+.experience-grid { margin-top: 50px; display: grid; grid-template-columns: 1.35fr .65fr; gap: 23px; align-items: stretch; }
+.search-demo, .phone-demo { border: 1px solid rgba(36,38,41,.08); border-radius: 22px; background: var(--white); box-shadow: var(--shadow-sm); }
+.search-demo { padding: 24px; }
+.phone-demo { padding: 24px; display: flex; flex-direction: column; align-items: center; }
+.demo-title-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.demo-title-row > div { display: flex; align-items: center; gap: 10px; }
+.demo-title-row > span { color: var(--gray-2); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.step-number { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--orange-soft); color: var(--orange-deep); font-size: 10px; font-weight: 900; }
+.search-top { padding: 15px; border-radius: 14px; background: #f4f4f2; }
+.search-field { min-height: 42px; padding: 0 13px; border: 1px solid #e2e2df; border-radius: 10px; display: flex; align-items: center; gap: 9px; background: var(--white); color: var(--gray); font-size: 11px; }
+.search-field svg { width: 17px; height: 17px; color: var(--ink); }
+.filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.filter-row button { padding: 7px 12px; border: 1px solid #dededb; border-radius: 999px; color: var(--gray); background: var(--white); font-size: 9px; font-weight: 700; }
+.filter-row button.active { border-color: var(--orange); color: var(--dark); background: var(--orange-soft); }
+.result-list { display: grid; gap: 10px; margin-top: 14px; }
+.result-card { min-height: 100px; padding: 10px; border: 1px solid #e8e8e4; border-radius: 13px; display: grid; grid-template-columns: 105px 1fr auto; gap: 13px; align-items: center; }
+.result-card.selected { border-color: var(--orange); box-shadow: 0 8px 22px rgba(255,147,0,.12); }
+.result-thumb { height: 78px; border-radius: 9px; position: relative; overflow: hidden; background: linear-gradient(145deg, #dce6e9, #efe9e2); }
+.result-thumb::before, .result-thumb::after { content: ""; position: absolute; bottom: 0; background: rgba(255,255,255,.72); border: 3px solid rgba(49,92,154,.12); }
+.result-thumb::before { left: 10px; width: 45px; height: 55px; }
+.result-thumb::after { right: 7px; width: 42px; height: 38px; }
+.thumb-two { background: linear-gradient(145deg, #e7e0d7, #d6e2e5); }
+.thumb-three { background: linear-gradient(145deg, #d8e3dd, #e8e4de); }
+.result-thumb span { position: absolute; left: 6px; top: 6px; z-index: 2; padding: 4px 6px; border-radius: 5px; background: var(--orange); font-size: 6px; font-weight: 900; }
+.result-copy h4 { margin: 0; font-size: 12px; }
+.result-copy p { margin: 3px 0 8px; color: var(--gray); font-size: 9px; }
+.result-copy > div { display: flex; align-items: center; gap: 8px; }
+.event-chip { padding: 5px 7px; border-radius: 6px; color: var(--orange-deep); background: var(--orange-soft); font-size: 8px; font-weight: 800; }
+.result-copy small { color: var(--gray); font-size: 7px; }
+.result-card > strong { font-size: 13px; text-align: right; }
+.result-card > strong small { display: block; color: var(--gray); font-size: 7px; font-weight: 500; }
+.phone-frame { width: min(100%, 270px); margin-top: 3px; padding: 11px; border-radius: 34px; background: var(--dark); box-shadow: 0 25px 48px rgba(25,27,30,.25); }
+.phone-notch { width: 72px; height: 7px; margin: 0 auto 8px; border-radius: 10px; background: #4b4f54; }
+.phone-screen { overflow: hidden; border-radius: 25px; background: var(--white); }
+.phone-photo { height: 170px; position: relative; background: linear-gradient(145deg, #d8e4e8, #eee8e0); }
+.phone-photo::before { content: ""; position: absolute; left: 40px; bottom: 0; width: 142px; height: 132px; background: #f7f4ee; border: 6px solid rgba(255,255,255,.72); box-shadow: inset 0 0 0 2px rgba(49,92,154,.1); }
+.phone-photo span { position: absolute; left: 12px; top: 12px; padding: 5px 7px; border-radius: 6px; background: var(--orange); font-size: 6px; font-weight: 900; }
+.phone-content { padding: 16px; }
+.phone-content h4 { margin: 0; font-size: 17px; }
+.phone-content > p { margin: 3px 0 13px; color: var(--gray); font-size: 9px; }
+.phone-event { padding: 10px; border-radius: 10px; display: flex; align-items: center; gap: 10px; color: var(--orange-deep); background: var(--orange-soft); }
+.phone-event svg { width: 20px; height: 20px; }
+.phone-event b, .phone-event span { display: block; }
+.phone-event b { font-size: 9px; color: var(--ink); }
+.phone-event span { margin-top: 3px; color: var(--gray); font-size: 7px; }
+.phone-content .button { width: 100%; min-height: 42px; margin-top: 12px; padding: 0 10px; font-size: 10px; }
+.phone-content > small { display: block; margin-top: 8px; color: var(--gray); text-align: center; font-size: 7px; }
+.agent-experience { margin-top: 24px; padding: 28px; border-radius: 24px; display: grid; grid-template-columns: .8fr 1fr 1.15fr; gap: 22px; align-items: stretch; background: #efe6d8; }
+.agent-copy { padding: 16px 8px; }
+.agent-copy h3 { margin: 12px 0 14px; font-size: 27px; line-height: 1.08; letter-spacing: -.03em; }
+.agent-copy > p { margin: 0; color: var(--gray); font-size: 13px; }
+.check-list { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; }
+.check-list li { display: flex; gap: 8px; color: #55595d; font-size: 11px; }
+.check-list svg { flex: 0 0 auto; width: 16px; height: 16px; color: var(--orange-deep); }
+.agent-console, .attendee-console { overflow: hidden; border-radius: 17px; background: var(--white); box-shadow: var(--shadow-sm); }
+.console-header { min-height: 52px; padding: 0 17px; display: flex; align-items: center; justify-content: space-between; background: var(--dark); color: var(--white); }
+.console-header span { font-size: 12px; font-weight: 800; }
+.console-header small { color: rgba(255,255,255,.45); font-size: 7px; letter-spacing: .08em; }
+.event-form { padding: 17px; display: grid; gap: 10px; }
+.event-form label { display: grid; grid-template-columns: 82px 1fr; align-items: center; gap: 8px; color: var(--gray); font-size: 9px; font-weight: 700; }
+.event-form input, .event-form select { width: 100%; height: 36px; border: 1px solid #dededb; border-radius: 8px; padding: 0 10px; color: var(--ink); background: #fafaf8; font-size: 10px; }
+.two-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.toggle-label { grid-template-columns: 82px auto !important; justify-content: start; }
+.toggle-label > input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle { width: 36px; height: 20px; border-radius: 999px; position: relative; background: #d7d7d3; }
+.toggle::after { content: ""; position: absolute; width: 14px; height: 14px; top: 3px; left: 3px; border-radius: 50%; background: var(--white); transition: transform .2s ease; }
+.toggle-label input:checked + .toggle { background: var(--orange); }
+.toggle-label input:checked + .toggle::after { transform: translateX(16px); }
+.event-form .button { width: 100%; min-height: 40px; margin-top: 3px; font-size: 10px; }
+.publish-toast { display: none; margin: 0 17px 17px; padding: 11px; border-radius: 9px; align-items: center; gap: 8px; color: var(--green); background: var(--green-soft); font-size: 9px; font-weight: 800; }
+.publish-toast.show { display: flex; animation: slide-up .28s ease both; }
+.publish-toast svg { width: 15px; height: 15px; }
+.status-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 13px; }
+.status-summary span { padding: 9px 6px; border-radius: 8px; background: #f3f3f0; color: var(--gray); text-align: center; font-size: 7px; }
+.status-summary b { display: block; color: var(--ink); font-size: 14px; }
+.lead-row { padding: 10px 13px; border-top: 1px solid #eeeeeb; display: grid; grid-template-columns: 32px 1fr auto auto; gap: 8px; align-items: center; }
+.lead-avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--white); font-size: 9px; font-weight: 900; }
+.teal-bg { background: var(--teal); }.orange-bg { background: var(--orange-deep); }.blue-bg { background: var(--blue); }.purple-bg { background: var(--purple); }
+.lead-row div b, .lead-row div small { display: block; }
+.lead-row div b { font-size: 9px; }
+.lead-row div small { margin-top: 2px; color: var(--gray); font-size: 7px; }
+.status { padding: 5px 6px; border-radius: 999px; font-size: 6px; font-weight: 900; }
+.status.requested { color: var(--orange-deep); background: var(--orange-soft); }
+.status.confirmed { color: var(--green); background: var(--green-soft); }
+.status.waitlist { color: var(--purple); background: var(--purple-soft); }
+.lead-row button { min-width: 42px; height: 28px; border: 0; border-radius: 7px; color: var(--dark); background: var(--orange); font-size: 8px; font-weight: 800; }
+
+.flow-section { padding: 105px 0; }
+.flow-track { position: relative; margin-top: 56px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.flow-track::before { content: ""; position: absolute; left: 9%; right: 9%; top: 54px; height: 2px; background: linear-gradient(90deg, var(--orange), var(--teal)); opacity: .55; }
+.flow-track article { position: relative; z-index: 1; min-height: 235px; padding: 20px; border: 1px solid rgba(255,255,255,.09); border-radius: 17px; background: #24282d; }
+.flow-track article > span { color: var(--orange); font-size: 9px; font-weight: 900; }
+.flow-icon { width: 56px; height: 56px; margin: 12px 0 20px; border-radius: 17px; display: grid; place-items: center; color: var(--dark); background: var(--orange); box-shadow: 0 10px 24px rgba(255,147,0,.2); }
+.flow-track article:nth-child(2) .flow-icon { background: #ffad36; }
+.flow-track article:nth-child(3) .flow-icon { color: var(--white); background: var(--teal); box-shadow: 0 10px 24px rgba(0,158,154,.18); }
+.flow-track article:nth-child(4) .flow-icon { color: var(--white); background: var(--blue); box-shadow: 0 10px 24px rgba(49,92,154,.18); }
+.flow-track article:nth-child(5) .flow-icon { color: var(--white); background: var(--purple); box-shadow: 0 10px 24px rgba(111,87,165,.18); }
+.flow-icon svg { width: 25px; height: 25px; }
+.flow-track h3 { margin: 0; font-size: 18px; }
+.flow-track p { margin: 9px 0 0; color: rgba(255,255,255,.55); font-size: 11px; }
+.mvp-principle { margin-top: 20px; padding: 18px 23px; border-radius: 14px; display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: center; color: rgba(255,255,255,.7); background: rgba(255,255,255,.055); }
+.mvp-principle b { color: var(--orange); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.mvp-principle span { font-size: 13px; }
+
+.architecture-section { padding: 108px 0; background: #f5eee4; }
+.architecture-map { position: relative; margin-top: 54px; display: grid; grid-template-columns: 1fr 1.12fr 1fr; gap: 60px; align-items: center; }
+.architecture-map::before { content: ""; position: absolute; left: 25%; right: 25%; top: 50%; height: 2px; background: var(--orange); opacity: .5; }
+.architecture-column { display: grid; gap: 12px; }
+.architecture-column article { position: relative; z-index: 1; min-height: 72px; padding: 15px; border-radius: 14px; display: flex; gap: 12px; align-items: center; background: var(--white); box-shadow: var(--shadow-sm); }
+.architecture-column article svg { width: 22px; height: 22px; flex: 0 0 auto; color: var(--orange-deep); }
+.right-column article svg { color: var(--teal); }
+.architecture-column b, .architecture-column span { display: block; }
+.architecture-column b { font-size: 11px; }
+.architecture-column span { margin-top: 3px; color: var(--gray); font-size: 9px; }
+.core-object { position: relative; z-index: 2; padding: 35px 22px; border-radius: 23px; color: var(--white); background: var(--dark); text-align: center; box-shadow: var(--shadow-md); }
+.core-object > span { color: var(--orange); font-size: 8px; font-weight: 900; letter-spacing: .15em; }
+.core-object svg { width: 45px; height: 45px; margin: 18px auto 12px; color: var(--orange); }
+.core-object h3 { margin: 0; font-size: 19px; }
+.core-object p { margin: 11px 0 0; color: rgba(255,255,255,.55); font-size: 9px; line-height: 1.7; }
+.reuse-strip { margin-top: 32px; padding: 14px 17px; border-radius: 13px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; background: var(--white); }
+.reuse-strip b { margin-right: 8px; color: var(--orange-deep); font-size: 9px; letter-spacing: .13em; }
+.reuse-strip span { padding: 7px 10px; border-radius: 999px; color: var(--gray); background: #f1f1ee; font-size: 8px; font-weight: 700; }
+
+.business-section { padding: 108px 0; }
+.monetization-grid { margin-top: 52px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.money-card { position: relative; min-height: 315px; padding: 27px; border: 1px solid rgba(36,38,41,.08); border-radius: 20px; background: var(--white); box-shadow: var(--shadow-sm); }
+.money-card.featured { border-color: var(--orange); transform: translateY(-8px); box-shadow: 0 24px 60px rgba(255,147,0,.15); }
+.money-step { position: absolute; right: 17px; top: 17px; color: #d9d9d6; font-size: 24px; font-weight: 900; }
+.money-icon { width: 49px; height: 49px; border-radius: 15px; display: grid; place-items: center; color: var(--orange-deep); background: var(--orange-soft); }
+.money-card:nth-child(3) .money-icon { color: var(--teal); background: var(--teal-soft); }
+.money-card:nth-child(4) .money-icon { color: var(--blue); background: var(--blue-soft); }
+.money-icon svg { width: 23px; height: 23px; }
+.money-card h3 { margin: 22px 0 8px; font-size: 18px; }
+.money-card strong { color: var(--orange-deep); font-size: 28px; letter-spacing: -.03em; }
+.money-card p { margin: 14px 0 0; color: var(--gray); font-size: 12px; }
+.money-card small { position: absolute; left: 27px; bottom: 23px; color: var(--gray-2); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.billing-guardrail { margin-top: 20px; padding: 20px 23px; border-radius: 15px; display: flex; align-items: center; gap: 16px; color: var(--white); background: var(--dark); }
+.billing-guardrail svg { flex: 0 0 auto; width: 32px; height: 32px; color: var(--orange); }
+.billing-guardrail b { font-size: 12px; }
+.billing-guardrail p { margin: 5px 0 0; color: rgba(255,255,255,.62); font-size: 11px; }
+.economics-panel { margin-top: 60px; padding: 43px; border-radius: 27px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 38px; color: var(--white); background: var(--dark); box-shadow: var(--shadow-md); }
+.economics-copy h2 { margin: 12px 0 13px; font-size: 39px; line-height: 1.08; letter-spacing: -.035em; }
+.economics-copy p { margin: 0; color: rgba(255,255,255,.6); font-size: 13px; }
+.scenario-buttons { display: flex; gap: 7px; margin-top: 24px; }
+.scenario-buttons button { padding: 9px 12px; border: 1px solid rgba(255,255,255,.11); border-radius: 9px; color: rgba(255,255,255,.58); background: rgba(255,255,255,.04); font-size: 9px; font-weight: 800; }
+.scenario-buttons button.active { border-color: var(--orange); color: var(--dark); background: var(--orange); }
+.economics-output { padding: 27px; border: 1px solid rgba(255,255,255,.1); border-radius: 19px; background: #24282d; }
+.economics-output > span { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.economics-output > strong { display: block; margin-top: 15px; font-size: 54px; line-height: 1; letter-spacing: -.05em; }
+.economics-output > small { display: block; margin-top: 8px; color: rgba(255,255,255,.47); font-size: 9px; }
+.revenue-bar { height: 10px; margin-top: 25px; border-radius: 999px; display: flex; overflow: hidden; background: rgba(255,255,255,.08); }
+.revenue-bar span { display: block; transition: width .35s ease; }
+#revenue-leads { background: var(--teal); }
+#revenue-boosts { background: var(--orange); }
+.revenue-legend { display: grid; gap: 8px; margin-top: 18px; }
+.revenue-legend span { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 9px; }
+.revenue-legend b { color: var(--white); }
+.revenue-legend i { width: 8px; height: 8px; border-radius: 50%; }
+.legend-leads { background: var(--teal); }.legend-boosts { background: var(--orange); }
+.assumption-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+.assumption-grid div { padding: 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 11px; background: rgba(255,255,255,.035); }
+.assumption-grid span, .assumption-grid b { display: block; }
+.assumption-grid span { color: rgba(255,255,255,.47); font-size: 8px; }
+.assumption-grid b { margin-top: 5px; font-size: 12px; }
+.model-note { grid-column: 1 / -1; margin: -18px 0 0; color: rgba(255,255,255,.35); font-size: 8px; }
+
+.pilot-section { padding: 108px 0; background: #f5eee4; }
+.pilot-timeline { position: relative; margin-top: 56px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.pilot-timeline::before { content: ""; position: absolute; left: 7%; right: 7%; top: 52px; height: 2px; background: #d3c7b5; }
+.pilot-timeline article { position: relative; z-index: 1; padding: 16px 14px; text-align: center; }
+.pilot-timeline article > span { color: var(--orange-deep); font-size: 9px; font-weight: 900; }
+.pilot-dot { width: 18px; height: 18px; margin: 25px auto; border: 4px solid #f5eee4; border-radius: 50%; background: var(--dark); box-shadow: 0 0 0 2px var(--orange); }
+.pilot-timeline article:last-child .pilot-dot { background: var(--orange); }
+.pilot-timeline h3 { margin: 0; font-size: 15px; }
+.pilot-timeline p { margin: 8px 0 0; color: var(--gray); font-size: 10px; }
+.gate-grid { margin-top: 32px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; }
+.gate-grid article { min-height: 150px; padding: 18px 13px; border-radius: 15px; background: var(--white); text-align: center; box-shadow: var(--shadow-sm); }
+.gate-grid span { color: var(--gray-2); font-size: 7px; font-weight: 900; letter-spacing: .11em; }
+.gate-grid strong { display: block; margin-top: 14px; color: var(--orange-deep); font-size: 24px; letter-spacing: -.04em; }
+.gate-grid p { margin: 8px 0 0; color: var(--gray); font-size: 9px; }
+
+.risk-section { padding: 108px 0; }
+.risk-grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 80px; align-items: start; }
+.risk-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.risk-list article { min-height: 135px; padding: 18px; border: 1px solid rgba(36,38,41,.08); border-radius: 15px; display: flex; gap: 14px; background: var(--white); box-shadow: var(--shadow-sm); }
+.risk-list article > span { flex: 0 0 auto; width: 35px; height: 35px; border-radius: 11px; display: grid; place-items: center; color: var(--red); background: var(--red-soft); font-size: 9px; font-weight: 900; }
+.risk-list h3 { margin: 2px 0 7px; font-size: 14px; }
+.risk-list p { margin: 0; color: var(--gray); font-size: 10px; }
+
+.decision-section { position: relative; padding: 110px 0 95px; overflow: hidden; }
+.decision-glow { position: absolute; width: 720px; height: 720px; right: -260px; top: -220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,147,0,.24), transparent 68%); }
+.decision-grid { position: relative; z-index: 1; display: grid; grid-template-columns: .85fr 1.15fr; gap: 65px; align-items: center; }
+.decision-copy h2 { margin: 14px 0 18px; font-size: clamp(42px, 5vw, 65px); line-height: 1; letter-spacing: -.045em; }
+.decision-copy p { margin: 0; max-width: 560px; color: rgba(255,255,255,.64); font-size: 16px; }
+.decision-copy .button { margin-top: 30px; }
+.roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.roadmap article { min-height: 170px; padding: 22px; border: 1px solid rgba(255,255,255,.09); border-radius: 17px; background: rgba(255,255,255,.045); }
+.roadmap span { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.roadmap h3 { margin: 13px 0 9px; font-size: 19px; }
+.roadmap p { margin: 0; color: rgba(255,255,255,.52); font-size: 11px; }
+.final-thought { position: relative; z-index: 1; margin-top: 56px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,.1); display: grid; grid-template-columns: 170px 1fr; gap: 22px; align-items: center; }
+.final-thought span { color: var(--orange); font-size: 10px; font-weight: 900; letter-spacing: .12em; }
+.final-thought p { margin: 0; color: var(--white); font-size: 23px; font-weight: 700; }
+
+.site-footer { padding: 45px 0; background: #111315; color: var(--white); }
+.footer-grid { display: grid; grid-template-columns: .7fr 1fr 1fr; gap: 38px; }
+.footer-brand p, .footer-sources p, .footer-note p { margin: 12px 0 0; color: rgba(255,255,255,.42); font-size: 10px; }
+.footer-sources b, .footer-note b { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+
+.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+.modal.open { opacity: 1; pointer-events: auto; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(8,9,10,.72); backdrop-filter: blur(7px); }
+.modal-card { position: relative; z-index: 1; width: min(100%, 480px); padding: 34px; border-radius: 24px; background: var(--white); box-shadow: 0 35px 100px rgba(0,0,0,.4); transform: translateY(15px) scale(.98); transition: transform .24s ease; }
+.modal.open .modal-card { transform: none; }
+.modal-close { position: absolute; right: 15px; top: 15px; width: 38px; height: 38px; border: 0; border-radius: 50%; display: grid; place-items: center; color: var(--gray); background: #f1f1ee; }
+.modal-close svg { width: 17px; height: 17px; }
+.modal-icon { width: 54px; height: 54px; border-radius: 17px; display: grid; place-items: center; color: var(--orange-deep); background: var(--orange-soft); }
+.modal-icon svg { width: 27px; height: 27px; }
+.modal-kicker { display: block; margin-top: 20px; color: var(--orange-deep); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
+.modal-card h2 { margin: 9px 0 4px; font-size: 30px; letter-spacing: -.035em; }
+.modal-subtitle { margin: 0; color: var(--gray); font-size: 12px; }
+#registration-form { display: grid; gap: 15px; margin-top: 24px; }
+#registration-form label { color: var(--gray); font-size: 10px; font-weight: 800; }
+#registration-form textarea { width: 100%; margin-top: 7px; padding: 12px; border: 1px solid #dcdcd8; border-radius: 11px; resize: vertical; color: var(--ink); background: #fafaf8; font-size: 12px; font-weight: 400; }
+#registration-form .consent { display: flex; align-items: flex-start; gap: 9px; color: var(--gray); font-weight: 400; line-height: 1.45; }
+#registration-form .consent input { margin-top: 2px; accent-color: var(--orange); }
+#registration-form .button { width: 100%; }
+.registration-success { display: none; margin-top: 18px; text-align: center; }
+.registration-success.show { display: block; animation: slide-up .28s ease both; }
+.registration-success > div { width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; color: var(--green); background: var(--green-soft); }
+.registration-success svg { width: 30px; height: 30px; }
+.registration-success h3 { margin: 16px 0 7px; font-size: 24px; }
+.registration-success p { margin: 0 auto 20px; max-width: 330px; color: var(--gray); font-size: 12px; }
+.registration-success .button { width: 100%; }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in-view { opacity: 1; transform: none; }
+.delay-1 { transition-delay: .08s; }.delay-2 { transition-delay: .16s; }.delay-3 { transition-delay: .24s; }.delay-4 { transition-delay: .32s; }.delay-5 { transition-delay: .4s; }
+@keyframes slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 1080px) {
+  .hero-grid { gap: 42px; grid-template-columns: minmax(0, 1fr) minmax(380px, .9fr); }
+  .note-filter { left: -25px; }
+  .note-lead { right: -15px; }
+  .strategy-grid { grid-template-columns: 1fr 1fr; }
+  .strategy-cards { grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); }
+  .strategy-card { grid-template-columns: 1fr; }
+  .agent-experience { grid-template-columns: 1fr 1fr; }
+  .agent-copy { grid-column: 1 / -1; }
+  .gate-grid { grid-template-columns: repeat(3, 1fr); }
+  .architecture-map { gap: 25px; }
+  .monetization-grid { grid-template-columns: repeat(2, 1fr); }
+  .money-card.featured { transform: none; }
+}
+
+@media (max-width: 860px) {
+  .desktop-cta { display: none; }
+  .menu-button { display: grid; }
+  .primary-nav { position: absolute; left: 20px; right: 20px; top: 66px; padding: 15px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; display: none; flex-direction: column; align-items: stretch; gap: 0; background: rgba(25,27,30,.98); box-shadow: var(--shadow-md); }
+  .primary-nav.open { display: flex; }
+  .primary-nav a { padding: 12px; }
+  .hero { min-height: auto; padding-top: 135px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-copy { text-align: center; }
+  .hero-copy h1, .hero-lede { margin-inline: auto; }
+  .hero-actions, .hero-tags { justify-content: center; }
+  .hero-demo { width: min(100%, 570px); margin-inline: auto; transform: none; }
+  .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  .strategy-callout { grid-template-columns: 1fr; gap: 8px; }
+  .persona-panel { grid-template-columns: 1fr; }
+  .persona-panel blockquote { grid-column: 1; grid-row: auto; margin-top: 30px; }
+  .experience-grid { grid-template-columns: 1fr; }
+  .phone-demo { padding-bottom: 36px; }
+  .flow-track { grid-template-columns: 1fr 1fr; }
+  .flow-track::before { display: none; }
+  .architecture-map { grid-template-columns: 1fr; }
+  .architecture-map::before { display: none; }
+  .core-object { grid-row: 1; }
+  .architecture-column { grid-template-columns: repeat(2, 1fr); }
+  .economics-panel { grid-template-columns: 1fr; }
+  .assumption-grid { grid-template-columns: repeat(2, 1fr); }
+  .pilot-timeline { grid-template-columns: 1fr 1fr; }
+  .pilot-timeline::before { display: none; }
+  .risk-grid { grid-template-columns: 1fr; gap: 38px; }
+  .decision-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .container, .nav-shell { width: min(calc(100% - 26px), var(--container)); }
+  .brand-copy b { font-size: 13px; }
+  .hero { padding: 121px 0 95px; }
+  .hero-copy h1 { font-size: 44px; }
+  .hero-lede { font-size: 16px; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .button { width: 100%; }
+  .hero-demo { border-radius: 18px; }
+  .listing-image { height: 190px; }
+  .browser-bar { border-radius: 17px 17px 0 0; }
+  .event-module { grid-template-columns: 44px 1fr; }
+  .event-module .button { grid-column: 1 / -1; width: 100%; }
+  .floating-note { display: none; }
+  .metric-grid { grid-template-columns: 1fr; }
+  .metric-card { min-height: auto; }
+  .strategy-grid { grid-template-columns: 1fr; }
+  .strategy-rings { width: 280px; height: 280px; }
+  .strategy-cards { grid-column: auto; grid-template-columns: 1fr; }
+  .strategy-card { grid-template-columns: 55px 1fr; }
+  .persona-tabs { grid-template-columns: 1fr; }
+  .persona-tab { min-height: 58px; justify-content: flex-start; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .persona-panel { padding: 26px; }
+  .persona-panel blockquote { font-size: 22px; }
+  .persona-needs { grid-template-columns: 1fr; }
+  .result-card { grid-template-columns: 82px 1fr; }
+  .result-card > strong { grid-column: 2; text-align: left; }
+  .agent-experience { padding: 16px; grid-template-columns: 1fr; }
+  .agent-copy { grid-column: auto; }
+  .event-form label { grid-template-columns: 1fr; }
+  .toggle-label { grid-template-columns: auto 1fr !important; }
+  .flow-track { grid-template-columns: 1fr; }
+  .mvp-principle { grid-template-columns: 1fr; }
+  .architecture-column { grid-template-columns: 1fr; }
+  .monetization-grid { grid-template-columns: 1fr; }
+  .economics-panel { padding: 26px 20px; }
+  .scenario-buttons { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .scenario-buttons button { padding-inline: 6px; }
+  .assumption-grid { grid-template-columns: 1fr 1fr; }
+  .pilot-timeline { grid-template-columns: 1fr; }
+  .pilot-timeline article { padding: 10px; }
+  .pilot-dot { margin: 12px auto; }
+  .gate-grid { grid-template-columns: repeat(2, 1fr); }
+  .risk-list { grid-template-columns: 1fr; }
+  .roadmap { grid-template-columns: 1fr; }
+  .final-thought { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-brand { grid-column: auto; }
+  .modal-card { padding: 27px 20px 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* Keep visually hidden form controls from affecting page width in all browsers. */
+html, body { overflow-x: hidden; }
+.toggle-label > input { width: 1px !important; height: 1px !important; margin: 0; }
+
+
+
+/* Revised concept additions */
+.demo-disclaimer { margin: 12px 0 0; color: #9a9ca0; font-size: 8px; text-align: right; }
+.reason-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.reason-card { min-height: 275px; padding: 25px; border: 1px solid rgba(36,38,41,.08); border-radius: var(--radius-md); background: var(--white); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: flex-start; }
+.reason-card strong { display: block; margin-top: 24px; font-size: 22px; line-height: 1.15; letter-spacing: -.025em; }
+.reason-card p { margin: 12px 0 0; color: var(--gray); font-size: 12px; }
+.reason-card small { display: block; margin-top: auto; padding-top: 18px; color: #9a9ca0; font-size: 9px; line-height: 1.45; }
+.source-link { display: inline-flex; margin-top: auto; padding-top: 18px; color: var(--orange-deep); font-size: 10px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.source-link:hover { color: var(--dark); }
+.precedent-section { padding: 108px 0; background: var(--white); }
+.city-grid { margin-top: 52px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.city-card { min-height: 330px; padding: 25px; border: 1px solid rgba(36,38,41,.09); border-radius: 22px; background: #fffaf3; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+.city-card:nth-child(2) { background: #f5faf9; }
+.city-card:nth-child(3) { background: #f5f8fc; }
+.city-card:nth-child(4) { background: #f8f5fc; }
+.city-code { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: var(--dark); color: var(--orange); font-size: 14px; font-weight: 900; letter-spacing: .08em; }
+.city-card > span { margin-top: 20px; color: var(--gray); font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.city-card h3 { margin: 11px 0 0; font-size: 19px; line-height: 1.24; letter-spacing: -.02em; }
+.city-card p { margin: 12px 0 0; color: var(--gray); font-size: 12px; }
+.pattern-strip { margin-top: 18px; padding: 20px 24px; border-radius: 16px; background: var(--dark); color: var(--white); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+.pattern-strip b { color: var(--orange); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.pattern-strip span { font-size: 12px; font-weight: 700; }
+.pattern-strip i { color: rgba(255,255,255,.3); font-style: normal; }
+.agent-experience { grid-template-columns: 1fr 1fr; }
+.agent-copy { grid-column: 1 / -1; max-width: 780px; }
+.agent-value-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.agent-value-grid article { min-height: 150px; padding: 18px; border: 1px solid rgba(36,38,41,.08); border-radius: 15px; background: var(--white); display: flex; gap: 13px; }
+.agent-value-grid svg { flex: 0 0 auto; width: 21px; height: 21px; margin-top: 2px; color: var(--orange-deep); }
+.agent-value-grid b { font-size: 13px; }
+.agent-value-grid p { margin: 6px 0 0; color: var(--gray); font-size: 10px; line-height: 1.5; }
+.activation-summary { padding: 12px 13px; border-radius: 11px; background: var(--orange-soft); display: flex; justify-content: space-between; gap: 12px; color: var(--gray); font-size: 9px; }
+.activation-summary b { color: var(--ink); }
+.economics-simple { margin-top: 60px; padding: 43px; border-radius: 27px; display: grid; grid-template-columns: .92fr 1.08fr; gap: 28px; color: var(--white); background: var(--dark); box-shadow: var(--shadow-md); }
+.economics-simple .economics-copy h2 { margin: 12px 0 13px; font-size: 39px; line-height: 1.08; letter-spacing: -.035em; }
+.economics-simple .economics-copy > p { margin: 0; color: rgba(255,255,255,.64); font-size: 13px; }
+.public-data-note { margin-top: 24px; padding: 18px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px; background: rgba(255,255,255,.05); display: flex; gap: 13px; }
+.public-data-note svg { flex: 0 0 auto; width: 21px; height: 21px; color: var(--orange); }
+.public-data-note b { font-size: 12px; }
+.public-data-note p { margin: 7px 0 0; color: rgba(255,255,255,.58); font-size: 10px; line-height: 1.5; }
+.public-data-note a { display: inline-flex; margin-top: 10px; color: var(--orange); font-size: 9px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.economics-formula { padding: 27px; border: 1px solid rgba(255,255,255,.1); border-radius: 19px; background: #24282d; display: flex; flex-direction: column; justify-content: center; }
+.economics-formula > span, .input-panel > span { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.formula-line { margin-top: 16px; padding: 14px 15px; border-radius: 12px; background: rgba(255,255,255,.065); display: flex; justify-content: center; align-items: center; gap: 12px; text-align: center; }
+.formula-line b { font-size: 14px; }
+.formula-line i { color: var(--orange); font-style: normal; font-weight: 900; }
+.formula-plus { margin: 7px 0 -9px; color: var(--orange); font-size: 22px; font-weight: 900; text-align: center; }
+.economics-formula small { margin-top: 16px; color: rgba(255,255,255,.48); font-size: 9px; text-align: center; }
+.input-panel { grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.1); }
+.input-grid { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.input-grid > div { padding: 15px; border-radius: 12px; background: rgba(255,255,255,.055); }
+.input-grid b { font-size: 11px; }
+.input-grid p { margin: 6px 0 0; color: rgba(255,255,255,.48); font-size: 9px; }
+.economics-simple .model-note { margin: 16px 0 0; color: rgba(255,255,255,.44); font-size: 9px; }
+.pilot-basis { margin: 30px auto 0; max-width: 940px; padding: 20px 23px; border-radius: 16px; background: var(--dark); color: var(--white); display: flex; gap: 15px; }
+.pilot-basis svg { flex: 0 0 auto; width: 23px; height: 23px; color: var(--orange); }
+.pilot-basis b { font-size: 13px; }
+.pilot-basis p { margin: 6px 0 0; color: rgba(255,255,255,.62); font-size: 11px; }
+.gate-grid-revised article { min-height: 175px; }
+.gate-grid-revised strong { font-size: 18px; line-height: 1.15; }
+.contact-card { margin-top: 32px; padding: 20px 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: rgba(255,255,255,.06); }
+.contact-card span { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .12em; }
+.contact-card p { margin: 8px 0 0 !important; color: var(--white) !important; font-size: 15px !important; }
+.revised-footer-grid { grid-template-columns: .7fr 1.5fr .55fr; }
+.footer-sources a { color: rgba(255,255,255,.7); text-decoration: underline; text-underline-offset: 2px; }
+.footer-note p { color: var(--white); font-size: 12px; font-weight: 700; }
+
+@media (max-width: 1020px) {
+  .reason-grid, .city-grid { grid-template-columns: 1fr 1fr; }
+  .agent-value-grid { grid-template-columns: 1fr 1fr; }
+  .economics-simple { grid-template-columns: 1fr; }
+  .input-panel { grid-column: auto; }
+  .input-grid { grid-template-columns: 1fr 1fr; }
+  .revised-footer-grid { grid-template-columns: 1fr 1fr; }
+  .revised-footer-grid .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 680px) {
+  .reason-grid, .city-grid, .agent-value-grid, .input-grid { grid-template-columns: 1fr; }
+  .economics-simple { padding: 27px 20px; }
+  .economics-simple .economics-copy h2 { font-size: 32px; }
+  .pattern-strip { align-items: flex-start; flex-direction: column; }
+  .pattern-strip i { display: none; }
+  .revised-footer-grid { grid-template-columns: 1fr; }
+  .revised-footer-grid .footer-brand { grid-column: auto; }
+}
+</style>
+</head>
+<body>
+<svg aria-hidden="true" class="svg-sprite">
+<symbol id="icon-house" viewbox="0 0 24 24"><path d="M3 11.2 12 4l9 7.2v8.3a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 19.5v-8.3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="M9 21v-6h6v6" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-calendar" viewbox="0 0 24 24"><rect fill="none" height="16" rx="2" stroke="currentColor" stroke-width="1.8" width="18" x="3" y="5"></rect><path d="M7 3v4M17 3v4M3 10h18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path><path d="m9.2 15.1 1.8 1.8 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-clock" viewbox="0 0 24 24"><circle cx="12" cy="12" fill="none" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-search" viewbox="0 0 24 24"><circle cx="10.5" cy="10.5" fill="none" r="6.5" stroke="currentColor" stroke-width="1.8"></circle><path d="m15.5 15.5 5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-users" viewbox="0 0 24 24"><path d="M16 20v-1.4c0-2.1-1.8-3.8-4-3.8H7c-2.2 0-4 1.7-4 3.8V20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path><circle cx="9.5" cy="8.5" fill="none" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M16 11.8c2.5.2 4.5 1.9 4.5 4.2V20M15.3 5.2a3.5 3.5 0 0 1 0 6.6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-phone" viewbox="0 0 24 24"><path d="M7.2 3.5 10 7.8 7.9 10c1.3 2.7 3.4 4.8 6.1 6.1l2.2-2.1 4.3 2.8-.9 3.1c-.2.7-.8 1.1-1.5 1.1C9.7 20.5 3.5 14.3 3 5.9c0-.7.4-1.3 1.1-1.5l3.1-.9Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-chart" viewbox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path><path d="m3 8 6-5 6 7 6-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-euro" viewbox="0 0 24 24"><path d="M18 6.2a7.7 7.7 0 1 0 0 11.6M4 10h11M4 14h10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-shield" viewbox="0 0 24 24"><path d="M12 3 20 6v5.5c0 4.8-3.2 8.2-8 9.5-4.8-1.3-8-4.7-8-9.5V6l8-3Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m8.5 12 2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-bolt" viewbox="0 0 24 24"><path d="m13.5 2-8 12h6L10.5 22l8-12h-6l1-8Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-arrow" viewbox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-check" viewbox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></symbol>
+<symbol id="icon-x" viewbox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-filter" viewbox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-bell" viewbox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8ZM10 21h4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-building" viewbox="0 0 24 24"><path d="M4 21V5l8-3v19M12 8h8v13M7 7h2M7 11h2M7 15h2M15 11h2M15 15h2M2 21h20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-menu" viewbox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></symbol>
+<symbol id="icon-location" viewbox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" fill="none" stroke="currentColor" stroke-width="1.8"></path><circle cx="12" cy="10" fill="none" r="2.5" stroke="currentColor" stroke-width="1.8"></circle></symbol>
+<symbol id="icon-database" viewbox="0 0 24 24"><ellipse cx="12" cy="5" fill="none" rx="8" ry="3" stroke="currentColor" stroke-width="1.8"></ellipse><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7" fill="none" stroke="currentColor" stroke-width="1.8"></path></symbol>
+<symbol id="icon-rocket" viewbox="0 0 24 24"><path d="M14 4c3-2 6-1 6-1s1 3-1 6l-5 5-4-4 4-6Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 10-5 1-2 3 5 1M14 14l-1 5-3 2-1-5M8 16l-3 3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><circle cx="16" cy="7" fill="none" r="1.2" stroke="currentColor" stroke-width="1.5"></circle></symbol>
+</svg>
+<header class="site-header" id="top">
+<div class="nav-shell">
+<a aria-label="Spitogatos Open House home" class="brand" href="#top">
+<span aria-hidden="true" class="brand-mark">
+<span class="ear ear-left"></span><span class="ear ear-right"></span>
+<svg><use href="#icon-house"></use></svg>
+</span>
+<span class="brand-copy"><b>spitogatos</b><small>OPEN HOUSE</small></span>
+</a>
+<button aria-controls="primary-nav" aria-expanded="false" aria-label="Open navigation" class="menu-button">
+<svg><use href="#icon-menu"></use></svg>
+</button>
+<nav aria-label="Primary navigation" class="primary-nav" id="primary-nav"><a href="#why">Why now</a><a href="#precedents">Europe</a><a href="#experience">Experience</a><a href="#business">Business case</a><a href="#pilot">Pilot</a></nav>
+<a class="button button-small button-light desktop-cta" href="#decision">Decision</a>
+</div>
+</header>
+<main>
+<section class="hero dark-section">
+<div class="hero-glow glow-one"></div>
+<div class="hero-glow glow-two"></div>
+<div class="container hero-grid">
+<div class="hero-copy reveal">
+<div class="eyebrow eyebrow-inverse">FEATURE CONCEPT · PAID LISTING ADD-ON</div>
+<h1>Make every enabled listing <span>visitable at a set time.</span></h1>
+<p class="hero-lede">Open House is a paid feature an agent can activate on any listing. The listing gains a scheduled viewing module, eligibility for an Open House search filter and a quick registration request—while the agent keeps control of confirmation and follow-up.</p>
+<div class="hero-actions">
+<a class="button button-primary" href="#experience">Explore the experience <svg><use href="#icon-arrow"></use></svg></a>
+<a class="button button-ghost" href="#business">See the business case</a>
+</div>
+<div aria-label="Product principles" class="hero-tags">
+<span>Any agent listing</span><span>Paid opt-in</span><span>Built on Book a Visit</span><span>Agent confirms by phone</span>
+</div>
+</div>
+<div aria-label="Illustrative Open House listing concept" class="hero-demo reveal delay-1">
+<div class="browser-bar">
+<span></span><span></span><span></span>
+<div>spitogatos.gr/listing/AB1234</div>
+</div>
+<div class="listing-image">
+<div aria-hidden="true" class="building-art">
+<span class="block block-one"></span><span class="block block-two"></span><span class="block block-three"></span>
+<span class="sun"></span>
+</div>
+<div class="image-badge">OPEN HOUSE</div>
+<button aria-label="Save listing" class="heart-button" type="button">♡</button>
+</div>
+<div class="listing-body">
+<div class="listing-heading">
+<div><p>Renovated 2-bedroom apartment</p><span>Koukaki · For sale · 84 m² · 3rd floor</span></div>
+<strong>€310,000</strong>
+</div>
+<div class="event-module">
+<div class="event-date"><b>27</b><span>JUN</span></div>
+<div class="event-detail"><b>Saturday · 11:00–12:30</b><span>Registration open · agent confirms by phone</span></div>
+<button class="button button-primary register-trigger" type="button">Register</button>
+</div>
+<div class="attendee-row">
+<div aria-hidden="true" class="avatars"><span>M</span><span>N</span><span>A</span><span>S</span><span>K</span></div>
+<p>Named requests collected before the event</p>
+</div>
+<p class="demo-disclaimer">Illustrative interface and sample listing data.</p>
+</div>
+<div class="floating-note note-filter"><svg><use href="#icon-filter"></use></svg><span>Eligible for the Open House filter</span></div>
+<div class="floating-note note-lead"><svg><use href="#icon-bolt"></use></svg><span>Named registration request</span></div>
+</div>
+</div>
+<div aria-hidden="true" class="hero-bottom-wave"></div>
+</section>
+<section class="metrics-section" id="why">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">WHY NOW</div>
+<h2>The opportunity is product-led—not rent-only.</h2>
+<p>The strongest case is not a collection of broad market statistics. It is a clear product gap: scheduled viewings already happen, but they are not consistently structured, discoverable or sold as a listing advantage.</p>
+</div>
+<div class="reason-grid">
+<article class="reason-card reveal"><span class="metric-icon orange"><svg><use href="#icon-calendar"></use></svg></span><strong>Existing behaviour</strong><p>Agents already group prospects into shared viewing windows. The feature standardises that workflow instead of creating a new habit.</p><small>Product hypothesis from the proposed Greek call-back workflow.</small></article>
+<article class="reason-card reveal delay-1"><span class="metric-icon teal"><svg><use href="#icon-bolt"></use></svg></span><strong>Existing lead rails</strong><p>Spitogatos introduced Book a Visit in June 2025, giving Open House a familiar request and agent-management foundation.</p><a class="source-link" href="https://www.spitogatos.gr/blog/ti-diaforopoiei-top-mesitika-grafeia-spitogatos" rel="noreferrer" target="_blank">Source · Spitogatos</a></article>
+<article class="reason-card reveal delay-2"><span class="metric-icon blue"><svg><use href="#icon-building"></use></svg></span><strong>Full-market scope</strong><p>Spitogatos already spans sale and rent across homes, commercial property, land and new developments. Open House can be enabled wherever an agent wants to create an in-person event.</p><a class="source-link" href="https://www.spitogatos.gr/en" rel="noreferrer" target="_blank">Source · Spitogatos</a></article>
+<article class="reason-card reveal delay-3"><span class="metric-icon purple"><svg><use href="#icon-euro"></use></svg></span><strong>Clear paid value</strong><p>Only paid-enabled listings receive the event module, badge and filter eligibility. That makes the agent benefit visible before any complex pricing model is introduced.</p><small>Proposed product rule—not an existing Spitogatos policy.</small></article>
+</div>
+<div class="strategy-callout reveal">
+<span class="callout-label">STRATEGIC IMPLICATION</span>
+<p>Open House should be positioned as <b>a paid event layer for any agent listing</b>: discoverability, batch coordination and a registrant list in one simple add-on.</p>
+</div>
+</div>
+</section>
+<section class="precedent-section" id="precedents">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">EUROPEAN PRECEDENTS</div>
+<h2>The interaction is already familiar in major European cities.</h2>
+<p>These portals use different commercial models, but their product patterns show that viewing dates, filters, registration and paid visibility can live naturally inside property search.</p>
+</div>
+<div class="city-grid">
+<article class="city-card reveal"><div class="city-code">CPH</div><span>Denmark · Copenhagen</span><h3>Boligsiden surfaces “Open house with registration” in search results.</h3><p>Listings display the date and time directly in result cards, including events that require registration.</p><a class="source-link" href="https://www.boligsiden.dk/kommune/koebenhavn/tilsalg/villa" rel="noreferrer" target="_blank">View source · Boligsiden</a></article>
+<article class="city-card reveal delay-1"><div class="city-code">AMS</div><span>Netherlands · Amsterdam</span><h3>Funda gives opted-in listings a label and filter visibility.</h3><p>Agents can select “Open house” in Funda Desk; participating listings receive a visible label and consumers can filter for them.</p><a class="source-link" href="https://www.funda.nl/voormakelaars/artikel-makelaar/zo-haal-je-alles-uit-de-nvm-open-huizen-dag/" rel="noreferrer" target="_blank">View source · Funda</a></article>
+<article class="city-card reveal delay-2"><div class="city-code">OSL</div><span>Norway · Oslo</span><h3>FINN combines viewing times with registration and agent control.</h3><p>Current Oslo listings show scheduled viewings, calendar actions and registration; agents can require sign-up before holding the viewing.</p><a class="source-link" href="https://www.finn.no/realestate/homes/ad.html?finnkode=467277005" rel="noreferrer" target="_blank">View source · FINN</a></article>
+<article class="city-card reveal delay-3"><div class="city-code">STO</div><span>Sweden · Stockholm</span><h3>Hemnet treats viewing time as both information and promotion.</h3><p>Viewing times appear in search results, while paid packages can add extra visibility around each scheduled viewing.</p><a class="source-link" href="https://www.hemnet.se/priser" rel="noreferrer" target="_blank">View source · Hemnet</a></article>
+</div>
+<div class="pattern-strip reveal"><b>Pattern to borrow</b><span>Agent opt-in</span><i>→</i><span>Listing badge + filter</span><i>→</i><span>Date and time</span><i>→</i><span>Quick registration</span><i>→</i><span>Agent follow-up</span></div>
+</div>
+</section>
+<section class="strategy-section">
+<div class="container strategy-grid">
+<div class="section-intro reveal">
+<div class="eyebrow">WHY · HOW · WHAT</div>
+<h2>A simple strategy schema.</h2>
+<p>The feature creates value only when the agent can see what was purchased, the seeker can act quickly and Spitogatos can measure incremental outcomes.</p>
+</div>
+<div aria-label="Why how what diagram" class="strategy-rings reveal delay-1">
+<div class="ring ring-what"><span>WHAT</span></div>
+<div class="ring ring-how"><span>HOW</span></div>
+<div class="ring ring-why"><span>WHY</span><b>Make viewable supply<br/>discoverable and valuable</b></div>
+</div>
+<div class="strategy-cards">
+<article class="strategy-card reveal"><span>WHY</span><div><h3>Create a paid listing advantage agents can understand</h3><p>Bundle extra discovery, a planned group viewing and a named attendee list into one visible product.</p></div></article>
+<article class="strategy-card reveal delay-1"><span>HOW</span><div><h3>Let the agent activate it on any listing and keep control</h3><p>The agent pays, sets one or more dates, chooses capacity and confirms requests through the channel they already use.</p></div></article>
+<article class="strategy-card reveal delay-2"><span>WHAT</span><div><h3>Add an event object to existing listing and lead surfaces</h3><p>Paid entitlement, search filter, badge, listing module, quick registration, agent management, reminders and analytics.</p></div></article>
+</div>
+</div>
+</section>
+<section class="persona-section dark-section">
+<div class="container">
+<div class="section-intro inverse reveal">
+<div class="eyebrow eyebrow-inverse">PERSONAS</div>
+<h2>Design for the marketplace, the professional and the household.</h2>
+<p>One feature, three distinct jobs to be done.</p>
+</div>
+<div class="persona-shell reveal">
+<div aria-label="Personas" class="persona-tabs" role="tablist">
+<button aria-controls="persona-panel" aria-selected="true" class="persona-tab active" data-persona="spitogatos" role="tab"><span>SG</span>Spitogatos</button>
+<button aria-controls="persona-panel" aria-selected="false" class="persona-tab" data-persona="agent" role="tab"><span>E</span>Eleni · agent</button>
+<button aria-controls="persona-panel" aria-selected="false" class="persona-tab" data-persona="couple" role="tab"><span>MN</span>Maria &amp; Nikos</button>
+</div>
+<div class="persona-panel" id="persona-panel" role="tabpanel" tabindex="0">
+<div class="persona-identity">
+<div class="persona-avatar" id="persona-avatar">SG</div>
+<div><span id="persona-role">Marketplace operator</span><h3 id="persona-name">Spitogatos Growth Team</h3></div>
+</div>
+<blockquote id="persona-quote">“Turn a common offline workflow into a paid, measurable product without confusing existing lead channels.”</blockquote>
+<div class="persona-needs">
+<div><span>JOB</span><p id="persona-job">Create a new paid listing add-on that increases agent value and produces high-intent interactions.</p></div>
+<div><span>FRICTION</span><p id="persona-friction">Today, viewing interest is split across calls and separate visit requests. There is no shared event that groups demand around one date and makes that coordination value visible to the agent.</p></div>
+<div><span>SUCCESS</span><p id="persona-success">Paid activations, repeated agent use, incremental contacts and a clear view of overlap with existing leads.</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="experience-section" id="experience">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">PRODUCT EXPERIENCE</div>
+<h2>From search to registration in seconds.</h2>
+<p>A visible event layer makes scheduled supply easy to discover across sale, rent and other listing categories.</p>
+</div>
+<div class="experience-grid">
+<div class="search-demo reveal">
+<div class="demo-title-row"><div><span class="step-number">1</span><b>Discover</b></div><span>Concept UI · sample data</span></div>
+<div class="search-top">
+<div class="search-field"><svg><use href="#icon-search"></use></svg><span>Athens · All listings</span></div>
+<div class="filter-row"><button>Transaction</button><button>Type</button><button class="active">Open House ✓</button><button>More</button></div>
+</div>
+<div class="result-list">
+<article class="result-card selected">
+<div class="result-thumb thumb-one"><span>OPEN HOUSE</span></div>
+<div class="result-copy"><h4>Apartment for sale · Koukaki</h4><p>84 m² · 2 bedrooms</p><div><span class="event-chip">Sat 27 Jun · 11:00</span><small>Registration open</small></div></div>
+<strong>€310k</strong>
+</article>
+<article class="result-card">
+<div class="result-thumb thumb-two"><span>OPEN HOUSE</span></div>
+<div class="result-copy"><h4>Apartment to rent · Pangrati</h4><p>72 m² · renovated</p><div><span class="event-chip">Sun 28 Jun · 17:30</span><small>Agent confirms</small></div></div>
+<strong>€1,150<small>/month</small></strong>
+</article>
+<article class="result-card">
+<div class="result-thumb thumb-three"><span>OPEN HOUSE</span></div>
+<div class="result-copy"><h4>Retail unit for sale · Neos Kosmos</h4><p>96 m² · ground floor</p><div><span class="event-chip">Tue 30 Jun · 18:00</span><small>Registration open</small></div></div>
+<strong>€225k</strong>
+</article>
+</div>
+</div>
+<div class="phone-demo reveal delay-1">
+<div class="demo-title-row"><div><span class="step-number">2</span><b>Register</b></div><span>Listing view</span></div>
+<div class="phone-frame">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="phone-photo"><span>OPEN HOUSE</span></div>
+<div class="phone-content">
+<h4>€310,000</h4><p>Koukaki · For sale · 2 bedrooms</p>
+<div class="phone-event"><svg><use href="#icon-calendar"></use></svg><div><b>Sat 27 Jun</b><span>11:00–12:30 · registration open</span></div></div>
+<button class="button button-primary register-trigger" type="button">Register for open house</button>
+<small>Quick message sent · agent may call to confirm</small>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="agent-experience reveal">
+<div class="agent-copy">
+<div class="eyebrow">AGENT VALUE</div>
+<h3>The feature is worth paying for when it saves time and changes listing visibility.</h3>
+<p>Open House is not payment for another contact button. It is payment for a discoverable event, batch coordination and a named follow-up list.</p>
+</div>
+<div class="agent-value-grid">
+<article><svg><use href="#icon-users"></use></svg><div><b>Batch appointments</b><p>Bring several prospects to one planned window instead of arranging repeated private visits.</p></div></article>
+<article><svg><use href="#icon-filter"></use></svg><div><b>Listing differentiation</b><p>Only enabled listings qualify for the Open House filter and badge. Among duplicate property ads, the enabled agent can gain the event-specific surface.</p></div></article>
+<article><svg><use href="#icon-bolt"></use></svg><div><b>Higher-intent requests</b><p>The user chooses a real date and time before sending contact details, giving the agent a clearer reason to follow up.</p></div></article>
+<article><svg><use href="#icon-phone"></use></svg><div><b>Agent control</b><p>Set capacity, call back, confirm, waitlist or cancel. The platform organises the event without replacing the local relationship.</p></div></article>
+<article><svg><use href="#icon-building"></use></svg><div><b>Portfolio-wide reuse</b><p>Use the same paid add-on for sale, rent, commercial property or a new-development viewing event.</p></div></article>
+<article><svg><use href="#icon-chart"></use></svg><div><b>Measurable outcomes</b><p>Track requests, confirmations, attendance and follow-up so the office can judge whether the activation paid back.</p></div></article>
+</div>
+<div class="agent-console">
+<div class="console-header"><span>Activate Open House</span><small>PAID ADD-ON · LISTING #AB1234</small></div>
+<form class="event-form" id="event-form">
+<label>Date<input id="event-date" type="date" value="2026-06-27"/></label>
+<label>Time<div class="two-inputs"><input id="event-start" type="time" value="11:00"/><input id="event-end" type="time" value="12:30"/></div></label>
+<label>Capacity<select id="event-capacity"><option>Open attendance</option><option selected="">8 attendees</option><option>10 attendees</option><option>12 attendees</option></select></label>
+<label>Instructions<input id="event-instructions" type="text" value="Ring bell 3 · bring ID"/></label>
+<label class="toggle-label"><input checked="" type="checkbox"/><span class="toggle"></span>Confirm by phone</label>
+<div class="activation-summary"><span>Open House entitlement</span><b>Billed to agency account</b></div>
+<button class="button button-primary" type="submit">Pay &amp; publish event</button>
+</form>
+<div aria-live="polite" class="publish-toast" id="publish-toast" role="status"><svg><use href="#icon-check"></use></svg><span>Activation confirmed and event added to search.</span></div>
+</div>
+<div class="attendee-console">
+<div class="console-header"><span>Saturday event · registrations</span><small>CONCEPT DATA</small></div>
+<div class="status-summary"><span><b>6</b> requested</span><span><b>4</b> confirmed</span><span><b>1</b> waitlist</span></div>
+<div class="lead-row"><span class="lead-avatar teal-bg">M</span><div><b>Maria P.</b><small>Requested 2 min ago</small></div><span class="status requested">REQUESTED</span><button>Call</button></div>
+<div class="lead-row"><span class="lead-avatar orange-bg">N</span><div><b>Nikos A.</b><small>Confirmed by phone</small></div><span class="status confirmed">CONFIRMED</span><button>View</button></div>
+<div class="lead-row"><span class="lead-avatar blue-bg">S</span><div><b>Sofia K.</b><small>Requested 8 min ago</small></div><span class="status requested">REQUESTED</span><button>Call</button></div>
+<div class="lead-row"><span class="lead-avatar purple-bg">A</span><div><b>Alex D.</b><small>Capacity reached</small></div><span class="status waitlist">WAITLIST</span><button>Call</button></div>
+</div>
+</div>
+</div>
+</section>
+<section class="flow-section dark-section">
+<div class="container">
+<div class="section-intro inverse narrow reveal">
+<div class="eyebrow eyebrow-inverse">END-TO-END FLOW</div>
+<h2>One coordinated workflow across five moments.</h2>
+<p>The platform handles entitlement, discovery and structured requests while the agent remains responsible for confirmation and the viewing itself.</p>
+</div>
+<div class="flow-track reveal">
+<article><span>01</span><div class="flow-icon"><svg><use href="#icon-euro"></use></svg></div><h3>Activate</h3><p>The agent enables and pays for Open House on a chosen listing.</p></article>
+<article><span>02</span><div class="flow-icon"><svg><use href="#icon-search"></use></svg></div><h3>Discover</h3><p>The event is indexed, badged and eligible for the Open House filter.</p></article>
+<article><span>03</span><div class="flow-icon"><svg><use href="#icon-bolt"></use></svg></div><h3>Register</h3><p>The seeker sends a quick request against a specific date and time.</p></article>
+<article><span>04</span><div class="flow-icon"><svg><use href="#icon-phone"></use></svg></div><h3>Confirm</h3><p>The agent calls or updates the request through the preferred workflow.</p></article>
+<article><span>05</span><div class="flow-icon"><svg><use href="#icon-chart"></use></svg></div><h3>Attend &amp; learn</h3><p>Attendance and follow-up create quality, efficiency and commercial signals.</p></article>
+</div>
+<div class="mvp-principle reveal"><b>MVP principle</b><span>Structure the paid event and the request. Do not force a full appointment scheduler or remove the agent’s call-back control.</span></div>
+</div>
+</section>
+<section class="architecture-section">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">IMPLEMENTATION</div>
+<h2>Interweave the event with existing platform rails.</h2>
+<p>Add one structured event object plus a paid entitlement, then reuse listing validation, search, Book a Visit lead delivery, CRM, notifications and analytics.</p>
+</div>
+<div class="architecture-map reveal">
+<div class="architecture-column left-column">
+<article><svg><use href="#icon-building"></use></svg><div><b>Agent admin</b><span>Create, edit, cancel</span></div></article>
+<article><svg><use href="#icon-house"></use></svg><div><b>Listing editor / CRM feed</b><span>Attach event to any listing</span></div></article>
+<article><svg><use href="#icon-euro"></use></svg><div><b>Billing &amp; entitlement</b><span>Verify paid activation</span></div></article>
+</div>
+<div class="core-object">
+<span>NEW CORE OBJECT</span><svg><use href="#icon-calendar"></use></svg><h3>OPEN HOUSE EVENT</h3><p>listing_id · office_id · start/end<br/>capacity · status · paid_entitlement<br/>reveal policy · instructions</p>
+</div>
+<div class="architecture-column right-column">
+<article><svg><use href="#icon-search"></use></svg><div><b>Search index</b><span>Filter, badge, ranking</span></div></article>
+<article><svg><use href="#icon-house"></use></svg><div><b>Listing detail</b><span>Event module + request</span></div></article>
+<article><svg><use href="#icon-bolt"></use></svg><div><b>Lead service</b><span>OPEN_HOUSE_REQUEST</span></div></article>
+<article><svg><use href="#icon-bell"></use></svg><div><b>Notifications &amp; analytics</b><span>Status, reminders, outcomes</span></div></article>
+</div>
+</div>
+<div class="reuse-strip reveal"><b>REUSE</b><span>Authentication</span><span>Listing validation</span><span>Book a Visit delivery</span><span>Agency billing</span><span>Agent contacts / CRM</span><span>Notifications</span><span>Analytics</span></div>
+</div>
+</section>
+<section class="business-section" id="business">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">MONETIZATION</div>
+<h2>Charge for the listing advantage the agent can see.</h2>
+<p>The cleanest MVP is a paid activation. It directly connects payment to filter visibility, the listing module, event coordination and the registrant list.</p>
+</div>
+<div class="monetization-grid">
+<article class="money-card featured reveal"><span class="money-step">1</span><div class="money-icon"><svg><use href="#icon-calendar"></use></svg></div><h3>Pay-per-listing activation</h3><strong>Primary</strong><p>One paid Open House entitlement for a listing or event window. Includes badge, filter eligibility, module and registration management.</p><small>RECOMMENDED MVP</small></article>
+<article class="money-card reveal delay-1"><span class="money-step">2</span><div class="money-icon"><svg><use href="#icon-building"></use></svg></div><h3>Office credit packs</h3><strong>Scale</strong><p>Bundles of activations for agencies that run frequent events across a larger portfolio.</p><small>VOLUME PRICING</small></article>
+<article class="money-card reveal delay-2"><span class="money-step">3</span><div class="money-icon"><svg><use href="#icon-chart"></use></svg></div><h3>Event promotion</h3><strong>Upsell</strong><p>Optional ranking, saved-search alerts, weekend collections or homepage placement around the scheduled event.</p><small>EXTRA VISIBILITY</small></article>
+<article class="money-card reveal delay-3"><span class="money-step">4</span><div class="money-icon"><svg><use href="#icon-bolt"></use></svg></div><h3>Lead or workflow add-ons</h3><strong>Later</strong><p>Test premium lead treatment, reminders, waitlists, CRM export or analytics only after the base activation proves value.</p><small>VALIDATE FIRST</small></article>
+</div>
+<div class="billing-guardrail reveal"><svg><use href="#icon-shield"></use></svg><div><b>Commercial guardrail</b><p>If the activation is paid, registration requests should either be included at MVP or deduplicated against Book a Visit. Agents must be able to understand exactly what the activation bought.</p></div></div>
+<div class="economics-simple reveal">
+<div class="economics-copy">
+<div class="eyebrow eyebrow-inverse">SIMPLE BUSINESS CASE</div>
+<h2>Use one formula and internal inputs.</h2>
+<p>The previous euro forecast has been removed. It was illustrative and was not derived from public Spitogatos product prices or company revenue.</p>
+<div class="public-data-note"><svg><use href="#icon-shield"></use></svg><div><b>What public data can—and cannot—tell us</b><p>The public Spitogatos Price Index tracks property asking prices. It does not provide the activation price, effective revenue per lead, billable professional inventory or company revenue needed for this feature forecast.</p><a href="https://www.spitogatos.gr/en/property-index" rel="noreferrer" target="_blank">Source · Spitogatos Price Index</a></div></div>
+</div>
+<div class="economics-formula">
+<span>MONTHLY OPEN HOUSE REVENUE</span>
+<div class="formula-line"><b>Paid activations</b><i>×</i><b>Activation fee</b></div>
+<div class="formula-plus">+</div>
+<div class="formula-line"><b>Promotion upgrades</b></div>
+<div class="formula-plus">+</div>
+<div class="formula-line"><b>Optional net-new lead value</b></div>
+<small>Subtract cannibalised existing lead revenue and incremental support cost.</small>
+</div>
+<div class="input-panel">
+<span>INTERNAL INPUTS REQUIRED</span>
+<div class="input-grid">
+<div><b>Eligible professional listings</b><p>How many listings could carry the paid entitlement each month?</p></div>
+<div><b>Paid activation rate</b><p>What share of eligible listings do agents activate at each tested price?</p></div>
+<div><b>Activation fee</b><p>Which price maximises revenue without suppressing repeat use?</p></div>
+<div><b>Repeat frequency</b><p>How many activations does an adopting office buy per month?</p></div>
+<div><b>Promotion attachment</b><p>What share also buys a boost or alert package?</p></div>
+<div><b>Lead overlap</b><p>How many registrations are truly incremental versus existing contact types?</p></div>
+</div>
+<p class="model-note">Prediction rule: do not publish a euro forecast until these six inputs are populated from internal billing, listing and pilot data.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="pilot-section" id="pilot">
+<div class="container">
+<div class="section-intro narrow reveal">
+<div class="eyebrow">PILOT DESIGN</div>
+<h2>Prove agent value before locking the price.</h2>
+<p>An 8-week mixed-inventory pilot can validate paid adoption, seeker demand, attendance, time saved, listing performance and net commercial value.</p>
+</div>
+<div class="pilot-timeline reveal">
+<article><span>W0–2</span><div class="pilot-dot"></div><h3>Recruit &amp; baseline</h3><p>Select agencies and matched sale, rent and commercial listings; capture current visit and lead baselines.</p></article>
+<article><span>W3</span><div class="pilot-dot"></div><h3>Launch</h3><p>Athens + Thessaloniki with enough events across categories and days to make the filter useful.</p></article>
+<article><span>W4–6</span><div class="pilot-dot"></div><h3>Operate</h3><p>Support agents, monitor event quality and test a small set of activation price points.</p></article>
+<article><span>W7</span><div class="pilot-dot"></div><h3>Measure</h3><p>Compare enabled listings with matched listings that did not receive the feature.</p></article>
+<article><span>W8</span><div class="pilot-dot"></div><h3>Decide</h3><p>Scale, adjust the package or stop against pre-agreed evidence.</p></article>
+</div>
+<div class="pilot-basis reveal"><svg><use href="#icon-chart"></use></svg><div><b>What the cards are based on</b><p>They are not external benchmarks. They map the feature’s value chain: paid supply → registrations → attendance → agent efficiency → listing performance → net revenue. Numeric gates should be set after W0–2 using current Spitogatos baselines.</p></div></div>
+<div class="gate-grid gate-grid-revised">
+<article class="reveal"><span>SUPPLY</span><strong>Adoption &amp; repeat</strong><p>Which invited agents activate, and how many use it again?</p></article>
+<article class="reveal delay-1"><span>DEMAND</span><strong>Discovery &amp; requests</strong><p>Do users apply the filter and register for events?</p></article>
+<article class="reveal delay-2"><span>QUALITY</span><strong>Confirm &amp; attend</strong><p>What share of requests become confirmed and attended viewings?</p></article>
+<article class="reveal delay-3"><span>AGENT VALUE</span><strong>Time &amp; trips saved</strong><p>Does one event replace enough scheduling and travel to justify payment?</p></article>
+<article class="reveal delay-4"><span>MARKETPLACE</span><strong>Incremental outcome</strong><p>Do enabled listings outperform matched listings on contacts or visits?</p></article>
+<article class="reveal delay-5"><span>ECONOMICS</span><strong>Net contribution</strong><p>Activation and upsell revenue minus overlap, support and incentives.</p></article>
+</div>
+</div>
+</section>
+<section class="risk-section">
+<div class="container risk-grid">
+<div class="section-intro reveal">
+<div class="eyebrow">KEY RISKS</div>
+<h2>The main risks are commercial and operational—not technical.</h2>
+<p>The pilot should treat event supply, no-shows, adoption, duplicate listings and billing clarity as first-class product problems.</p>
+</div>
+<div class="risk-list">
+<article class="reveal"><span>01</span><div><h3>No-shows</h3><p>Call-back confirmation, reminders, waitlist and attendance status.</p></div></article>
+<article class="reveal delay-1"><span>02</span><div><h3>Empty filter</h3><p>Seed enough events by area, category and day; provide a nearby-date fallback.</p></div></article>
+<article class="reveal delay-2"><span>03</span><div><h3>Lead cannibalisation</h3><p>Cross-channel dedupe, matched holdout and net-revenue reporting.</p></div></article>
+<article class="reveal delay-3"><span>04</span><div><h3>Weak paid adoption</h3><p>Make the entitlement concrete: badge, filter, registrant list and outcome reporting.</p></div></article>
+<article class="reveal delay-4"><span>05</span><div><h3>Privacy &amp; address</h3><p>Reveal policy, minimum data, retention rules and consented notifications.</p></div></article>
+<article class="reveal delay-5"><span>06</span><div><h3>Duplicate property listings</h3><p>Clarify that filter visibility belongs to each paid-enabled listing, while preventing duplicate events from the same office.</p></div></article>
+</div>
+</div>
+</section>
+<section class="decision-section dark-section" id="decision">
+<div class="decision-glow"></div>
+<div class="container decision-grid">
+<div class="decision-copy reveal">
+<div class="eyebrow eyebrow-inverse">ROADMAP &amp; DECISION</div>
+<h2>Approve a 2-week feasibility sprint.</h2>
+<p>Replace commercial assumptions with internal data, validate the workflow with agents and property seekers, and leave the sprint with a pilot-ready product, entitlement model and measurement plan.</p>
+<div class="contact-card"><span>INTERNAL CONTACT</span><p>Reach out in your favorite way to <b>Panagiotis Gkatzelidis</b> for more info.</p></div>
+</div>
+<div class="roadmap reveal delay-1">
+<article><span>0–4 weeks</span><h3>Discover</h3><p>Data audit · agent interviews · clickable prototype · billing and policy decisions</p></article>
+<article><span>5–10 weeks</span><h3>Build MVP</h3><p>Paid entitlement · event object · search surfaces · listing module · agent management · telemetry</p></article>
+<article><span>11–18 weeks</span><h3>Pilot</h3><p>Athens + Thessaloniki · mixed listing cohort · matched holdout · weekly review</p></article>
+<article><span>19–28 weeks</span><h3>Monetize &amp; scale</h3><p>Price optimisation · office packs · event boosts · analytics · broader rollout</p></article>
+</div>
+</div>
+<div class="container final-thought reveal"><span>THE OPPORTUNITY</span><p>Turn an agent-scheduled viewing into paid, searchable marketplace inventory.</p></div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="container footer-grid revised-footer-grid">
+<div class="footer-brand">
+<a class="brand" href="#top"><span aria-hidden="true" class="brand-mark"><span class="ear ear-left"></span><span class="ear ear-right"></span><svg><use href="#icon-house"></use></svg></span><span class="brand-copy"><b>spitogatos</b><small>OPEN HOUSE</small></span></a>
+<p>Internal feature concept · Revised June 2026</p>
+</div>
+<div class="footer-sources">
+<b>Sources</b>
+<p><a href="https://www.spitogatos.gr/en" rel="noreferrer" target="_blank">Spitogatos listing scope</a> · <a href="https://www.spitogatos.gr/blog/ti-diaforopoiei-top-mesitika-grafeia-spitogatos" rel="noreferrer" target="_blank">Book a Visit</a> · <a href="https://www.spitogatos.gr/en/property-index" rel="noreferrer" target="_blank">SPI</a> · <a href="https://www.boligsiden.dk/kommune/koebenhavn/tilsalg/villa" rel="noreferrer" target="_blank">Boligsiden</a> · <a href="https://www.funda.nl/voormakelaars/artikel-makelaar/zo-haal-je-alles-uit-de-nvm-open-huizen-dag/" rel="noreferrer" target="_blank">Funda</a> · <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=467277005" rel="noreferrer" target="_blank">FINN</a> · <a href="https://www.hemnet.se/priser" rel="noreferrer" target="_blank">Hemnet</a>. Accessed 19 June 2026.</p>
+</div>
+<div class="footer-note"><b>Author</b><p>Gintare Rozenaite</p></div>
+</div>
+</footer>
+<div aria-hidden="true" aria-labelledby="modal-title" aria-modal="true" class="modal" id="registration-modal" role="dialog">
+<div class="modal-backdrop" data-close-modal=""></div>
+<div class="modal-card" role="document">
+<button aria-label="Close registration" class="modal-close" data-close-modal="" type="button"><svg><use href="#icon-x"></use></svg></button>
+<div class="modal-icon"><svg><use href="#icon-calendar"></use></svg></div>
+<span class="modal-kicker">OPEN HOUSE REQUEST</span>
+<h2 id="modal-title">Saturday, 27 June</h2>
+<p class="modal-subtitle">11:00–12:30 · Renovated 2-bedroom apartment in Koukaki</p>
+<form id="registration-form">
+<label>Your message<textarea rows="3">Hi, we would like to attend the open house. Please call us to confirm.</textarea></label>
+<label class="consent"><input checked="" type="checkbox"/>I agree to share my contact details with the listing agent for this request.</label>
+<button class="button button-primary" type="submit">Send request</button>
+</form>
+<div aria-live="polite" class="registration-success" id="registration-success" role="status">
+<div><svg><use href="#icon-check"></use></svg></div><h3>Request sent</h3><p>The agent has received your Open House lead and may call to confirm.</p><button class="button button-dark" data-close-modal="" type="button">Done</button>
+</div>
+</div>
+</div>
+<script>
+const header = document.querySelector('.site-header');
+const menuButton = document.querySelector('.menu-button');
+const nav = document.querySelector('.primary-nav');
+
+const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 24);
+updateHeader();
+window.addEventListener('scroll', updateHeader, { passive: true });
+
+menuButton.addEventListener('click', () => {
+  const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+  menuButton.setAttribute('aria-expanded', String(!isOpen));
+  nav.classList.toggle('open', !isOpen);
+});
+nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+  nav.classList.remove('open');
+  menuButton.setAttribute('aria-expanded', 'false');
+}));
+
+const personaData = {
+  spitogatos: {
+    avatar: 'SG', role: 'Marketplace operator', name: 'Spitogatos Growth Team',
+    quote: '“Turn a common offline workflow into a paid, measurable product without confusing existing lead channels.”',
+    job: 'Create a new paid listing add-on that increases agent value and produces high-intent interactions.',
+    friction: 'Today, viewing interest is split across calls and separate visit requests. There is no shared event that groups demand around one date and makes that coordination value visible to the agent.',
+    success: 'Paid activations, repeated agent use, incremental contacts and a clear view of overlap with existing leads.',
+    tone: 'teal'
+  },
+  agent: {
+    avatar: 'E', role: 'Real estate agent · mixed portfolio', name: 'Eleni',
+    quote: '“Give my listing a clear viewing time, bring serious people together and let me call the ones I want to confirm.”',
+    job: 'Show any listing to several relevant prospects in one planned window.',
+    friction: 'Back-and-forth scheduling, repeated trips, no-shows and duplicate listings competing for attention.',
+    success: 'More qualified attendees per hour, fewer private trips and enough listing visibility to justify the activation fee.',
+    tone: 'orange'
+  },
+  couple: {
+    avatar: 'MN', role: 'Couple looking for an apartment to rent', name: 'Maria & Nikos',
+    quote: '“Show us when we can actually visit before we spend time contacting the listing.”',
+    job: 'Find and visit a viable rental home around work and personal commitments.',
+    friction: 'Unclear availability, slow replies and repeated messages just to agree on a time.',
+    success: 'Relevant events found, requested and confirmed with very little effort.',
+    tone: 'blue'
+  }
+};
+
+const personaEls = {
+  avatar: document.getElementById('persona-avatar'), role: document.getElementById('persona-role'),
+  name: document.getElementById('persona-name'), quote: document.getElementById('persona-quote'),
+  job: document.getElementById('persona-job'), friction: document.getElementById('persona-friction'),
+  success: document.getElementById('persona-success')
+};
+const personaColors = {
+  teal: ['var(--teal)', 'var(--teal-soft)'],
+  orange: ['var(--orange-deep)', 'var(--orange-soft)'],
+  blue: ['var(--blue)', 'var(--blue-soft)']
+};
+
+document.querySelectorAll('.persona-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const data = personaData[tab.dataset.persona];
+    document.querySelectorAll('.persona-tab').forEach(item => {
+      item.classList.toggle('active', item === tab);
+      item.setAttribute('aria-selected', String(item === tab));
+    });
+    personaEls.avatar.textContent = data.avatar;
+    personaEls.role.textContent = data.role;
+    personaEls.name.textContent = data.name;
+    personaEls.quote.textContent = data.quote;
+    personaEls.job.textContent = data.job;
+    personaEls.friction.textContent = data.friction;
+    personaEls.success.textContent = data.success;
+    personaEls.avatar.style.color = personaColors[data.tone][0];
+    personaEls.avatar.style.background = personaColors[data.tone][1];
+  });
+});
+
+const modal = document.getElementById('registration-modal');
+const registrationForm = document.getElementById('registration-form');
+const registrationSuccess = document.getElementById('registration-success');
+let previousFocus = null;
+function openModal() {
+  previousFocus = document.activeElement;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  registrationForm.style.display = 'grid';
+  registrationSuccess.classList.remove('show');
+  setTimeout(() => modal.querySelector('textarea').focus(), 60);
+}
+function closeModal() {
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+  if (previousFocus) previousFocus.focus();
+}
+document.querySelectorAll('.register-trigger').forEach(button => button.addEventListener('click', openModal));
+document.querySelectorAll('[data-close-modal]').forEach(item => item.addEventListener('click', closeModal));
+registrationForm.addEventListener('submit', event => {
+  event.preventDefault();
+  registrationForm.style.display = 'none';
+  registrationSuccess.classList.add('show');
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && modal.classList.contains('open')) closeModal();
+});
+
+const eventForm = document.getElementById('event-form');
+const publishToast = document.getElementById('publish-toast');
+eventForm.addEventListener('submit', event => {
+  event.preventDefault();
+  publishToast.classList.add('show');
+  setTimeout(() => publishToast.classList.remove('show'), 3800);
+});
+
+const revealEls = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .08, rootMargin: '0px 0px -30px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+} else {
+  revealEls.forEach(el => el.classList.add('in-view'));
+}
+</script>
+</body>
+</html>
